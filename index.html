@@ -1,4 +1,12 @@
 <style>
+    body {
+        background-image: radial-gradient(#222, #111);
+        color: white;
+    }
+    h1, p {
+        margin: 0;
+        padding: 0;
+    }
     #main {
         position: fixed;
         left: 50vw;
@@ -10,6 +18,54 @@
         aspect-ratio: 0.7;
         border: 1px solid black;
     }
+        #title {
+            position: absolute;
+            bottom: 100%;
+            margin-bottom: 1vmin;
+            text-align: center;
+            width: 100%;
+        }
+        #can {
+            width: 100%;
+            height: 100%;
+            border: 2px dashed white;
+        }
+        #settings {
+            position: absolute;
+            right: 100%;
+            top: 0%;
+            margin-top: 1vmin;
+            margin-right: 2vmin;
+        }
+            #diff {
+                display: flex;
+                height: 10ch;
+            }
+                #diff > label {
+                    transform: rotate(-90deg);
+                    direction: rtl;
+                    height: calc(1ex + 4vmin);
+                    width: calc(1ex + 4vmin);
+                    cursor: pointer;
+                    color: black;
+                }
+                    #diff > label > div:hover, #diff input[type="radio"]:checked + label > div {
+                        transform: translateX(-10px);
+                    }
+                    #diff .first > div { border-radius: 2vmin 2vmin 0 0 }
+                    #diff .last > div { border-radius: 0 0 2vmin 2vmin }
+                    #diff > label > div {
+                        transition: 0.2s ease transform;
+                        display: block;
+                        position: absolute;
+                        content: "";
+                        background-color: var(--bg);
+                        width: 10ch;
+                        padding: 1vmin;
+                    }
+                #diff > input {
+                    display: none;
+                }
         #info {
             position: absolute;
             left: 100%;
@@ -17,17 +73,75 @@
             margin-top: 1vmin;
             margin-left: 2vmin;
         }
+            #health {
+                position: relative;
+            }
+                #healthnum {
+                    color: red;
+                    margin-right: 1vmin;
+                }
+                #healthbar {
+                    height: 1ex;
+                    border-radius: 0.5ex;
+                    line-height: 100%;
+                    background-color: black;
+                    overflow: clip;
+                    flex-grow: 1;
+                    width: 100%;
+                }
+                    #healthbaralive {
+                        height: 100%;
+                        width: 100%;
+                        transition: 0.2s ease transform;
+                        background-color: red;
+                    }
             #score {
                 font-size: 200%;
             }
+            #hiscore:before {
+                content: "Hi: "
+            }
+        #footer {
+            position: absolute;
+            top: 100%;
+            margin-top: 1vmin;
+            text-align: center;
+            width: 100%;
+        }
+                
 </style>
 
 <div id="main">
+    <div id="title">
+        <h1> Tohou </h1>
+    </div>
     <canvas id="can"></canvas>
     <div id="info">
-        <div id="score">0000000000</div>
-        <div id="hiscore">0000000000</div>
+        <div id="health">
+            <div id="healthbar"><div id="healthbaralive"></div></div>
+            <div id="healthnum">100</div>
+        </div>
+        <div id="score">000000000</div>
+        <div id="hiscore">000000000</div>
+    </div>
+    <div id="settings">
+        <div id="diff">
+            <input id="diffeasy" type="radio" name="diff" value="0" oninput="updateDiff(parseInt(event.target.value))">
+            <label class="first" for="diffeasy" style="--bg:#8f8"> <div> Easy </div> </label>
+            <input id="diffmedium" type="radio" name="diff" value="1" oninput="updateDiff(parseInt(event.target.value))">
+            <label for="diffmedium" style="--bg:#ff8"> <div> Medium </div> </label>
+            <input checked id="diffhard" type="radio" name="diff" value="2" oninput="updateDiff(parseInt(event.target.value))">
+            <label for="diffhard" style="--bg:#fa8"> <div> Hard </div> </label>
+            <input id="diffextreme" type="radio" name="diff" value="3" oninput="updateDiff(parseInt(event.target.value))">
+            <label for="diffextreme" style="--bg:#f88"> <div> Extreme </div> </label>
+            <input id="diffnightmare" type="radio" name="diff" value="4" oninput="updateDiff(parseInt(event.target.value))">
+            <label class="last" for="diffnightmare" style="--bg:#f8f"> <div> Nightmare </div> </label>
+        </div>
+    </div>
+    <div id="footer">
+        <p> Use <b>WASD</b>. Don't touch anything. </p>
     </div>
 </div>
 
+<script src="attacks.js" async></script>
 <script src="index.js" defer></script>
