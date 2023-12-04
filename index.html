@@ -1,0 +1,33 @@
+<style>
+    #main {
+        position: fixed;
+        left: 50vw;
+        top: 50vh;
+        transform: translate(-50%, -50%);
+        width: calc(70vmin * 0.7);
+        max-width: calc(100vw - 30vmin);
+        max-height: calc(100vh - 2vmin);
+        aspect-ratio: 0.7;
+        border: 1px solid black;
+    }
+        #info {
+            position: absolute;
+            left: 100%;
+            top: 0%;
+            margin-top: 1vmin;
+            margin-left: 2vmin;
+        }
+            #score {
+                font-size: 200%;
+            }
+</style>
+
+<div id="main">
+    <canvas id="can"></canvas>
+    <div id="info">
+        <div id="score">0000000000</div>
+        <div id="hiscore">0000000000</div>
+    </div>
+</div>
+
+<script src="index.js" defer></script>
