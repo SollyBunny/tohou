@@ -154,6 +154,7 @@ class Collision extends Physics {
         this.r = r;
         this.dead = false;
         this.updateGrid();
+        effectShoot.play();
     }
     updateGrid() {
         const newGridPos = this.pos.gridPosPrimitive();
@@ -191,6 +192,7 @@ class Proj extends Collision {
         this.color = Proj.colors[dmg];
         this.bounces = bounces;
         this.time = time;
+        effectShoot.play();
     }
     update(dt) {
         super.update(dt);
@@ -254,8 +256,7 @@ class Player {
     healthMax = 100;
     constructor(pos) {
         this.pos = pos || new Vector();
-        this.vel = new Vector(0, 0);
-        this.control = [false, false, false, false]; // L, R, U, D
+        this.control = new Vector();
     }
     update(dt) {
 
@@ -284,17 +285,9 @@ class Player {
             gridPos.x -= 3;
             gridPos.y += 1;
         }
-
-        let x = 0, y = 0;
-        if (this.control[0]) x -= 1;
-        if (this.control[1]) x += 1;
-        if (this.control[2]) y -= 1;
-        if (this.control[3]) y += 1;
         let mag = this.speed;
-        if (x !== 0 && y !== 0) mag = mag / Math.sqrt(2);
-        this.vel.x = x * mag;
-        this.vel.y = y * mag;
-        this.pos.iaddmul(this.vel, dt);
+        if (this.control.x !== 0 && this.control.y !== 0) mag = mag / Math.sqrt(2);
+        this.pos.iaddmul(this.control, dt * mag);
         if (this.pos.x < this.r) {
             this.pos.x = this.r;
         } else if (this.pos.x > width - this.r) {
@@ -318,6 +311,22 @@ function sleep(time) {
         window.setTimeout(resolve, time * 1000);
     });
 }
+
+let mouse = undefined;
+can.addEventListener("pointerdown", event => {
+    mouse = new Vector(event.layerX / can.width, event.layerY / can.height);
+    event.preventDefault();
+    can.setPointerCapture(event.pointerId);
+});
+can.addEventListener("pointermove", event => {
+    event.preventDefault();
+    if (mouse === undefined) return;
+    mouse.set(event.layerX / can.width, event.layerY / can.height);
+});
+can.addEventListener("pointerup", event => {
+    event.preventDefault();
+    mouse = undefined;
+});
 
 let timeOld = performance.now();
 let timeDelta = 0;
@@ -358,10 +367,15 @@ function frame() {
             timeSinceLastAttack += timeDelta;
         }
 
-        player.control[0] = keys["a"];
-        player.control[1] = keys["d"];
-        player.control[2] = keys["w"];
-        player.control[3] = keys["s"];
+        if (mouse) {
+            console.log(mouse)
+            player.control.x = (mouse.x > 0.3 ? 1 : 0) - (mouse.x < -0.3 ? 1 : 0);
+            player.control.y = (mouse.y > 0.3 ? 1 : 0) - (mouse.y < -0.3 ? 1 : 0);
+        } else {
+            player.control.x = (keys["d"] ? 1 : 0) - (keys["a"] ? 1 : 0);
+            player.control.y = (keys["s"] ? 1 : 0) - (keys["w"] ? 1 : 0);
+        }
+        
         if (
             !lastShot ||
             lastShot.dead ||
